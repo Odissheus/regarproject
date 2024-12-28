@@ -2,7 +2,7 @@ from typing import List
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from database import get_db
-from models import PrezziRimborso, ListeTrasparenza
+from models import PrezziRimborso, ListaTrasparenza  # cambiato da ListeTrasparenza
 from pydantic import BaseModel
 
 app = FastAPI()
@@ -30,4 +30,4 @@ def get_prezzi_rimborso(db: Session = Depends(get_db)):
 
 @app.get("/liste-trasparenza", response_model=List[ListaResponse])
 def get_liste_trasparenza(db: Session = Depends(get_db)):
-    return db.query(ListeTrasparenza).all()
+    return db.query(ListaTrasparenza).all()  # cambiato da ListeTrasparenza
