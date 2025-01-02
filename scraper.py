@@ -10,7 +10,7 @@ import pandas as pd
 
 Base = declarative_base()
 
-class ListaTrasparenza(Base):
+class ListeTrasparenza(Base):
     __tablename__ = 'liste_trasparenza'
     
     id = Column(Integer, primary_key=True)
@@ -67,7 +67,7 @@ def salva_nel_database(dati):
     
     try:
         for elemento in dati:
-            record = ListaTrasparenza(**elemento)
+            record = ListeTrasparenza(**elemento)
             session.add(record)
         session.commit()
     except Exception as e:
@@ -82,8 +82,8 @@ def cerca_principio_attivo(principio):
     session = Session()
     
     try:
-        risultati = session.query(ListaTrasparenza).filter(
-            ListaTrasparenza.principio_attivo.ilike(f'%{principio}%')
+        risultati = session.query(ListeTrasparenza).filter(
+            ListeTrasparenza.principio_attivo.ilike(f'%{principio}%')
         ).all()
         return risultati
     finally:
