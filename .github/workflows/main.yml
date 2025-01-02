@@ -9,6 +9,20 @@ on:
 jobs:
   backend-tests:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    
     steps:
     - uses: actions/checkout@v2
     
@@ -24,6 +38,8 @@ jobs:
         pip install pytest
     
     - name: Run tests
+      env:
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
       run: |
         pytest test_system.py test_chatbot.py
 
@@ -38,11 +54,16 @@ jobs:
         node-version: '18'
     
     - name: Install dependencies
+      working-directory: ./frontend
+      run: npm ci
+        
+    - name: Set permissions
       run: |
         cd frontend
-        npm install
+        chmod +x node_modules/.bin/react-scripts
     
     - name: Build frontend
-      run: |
-        cd frontend
-        npm run build
+      working-directory: ./frontend
+      env:
+        CI: false
+      run: npm run build

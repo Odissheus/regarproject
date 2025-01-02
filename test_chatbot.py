@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from models import ListaTrasparenza, ModificaListaTrasparenza
+from models import ListeTrasparenza, ModificaListaTrasparenza
 import json
 from datetime import datetime, timedelta
 
@@ -17,11 +17,11 @@ class TransparencyListChatbot:
         try:
             # Ricerca per principio attivo
             if "prezzo" in query or "costo" in query:
-                for principio in session.query(ListaTrasparenza.principio_attivo).distinct():
+                for principio in session.query(ListeTrasparenza.principio_attivo).distinct():
                     if principio[0].lower() in query:
-                        result = session.query(ListaTrasparenza)\
-                            .filter(ListaTrasparenza.principio_attivo == principio[0])\
-                            .order_by(ListaTrasparenza.data_aggiornamento.desc())\
+                        result = session.query(ListeTrasparenza)\
+                            .filter(ListeTrasparenza.principio_attivo == principio[0])\
+                            .order_by(ListeTrasparenza.data_aggiornamento.desc())\
                             .first()
                         return f"Il prezzo attuale per {result.principio_attivo} è {result.prezzo}€"
 
@@ -42,8 +42,8 @@ class TransparencyListChatbot:
                 un_mese_fa = oggi - timedelta(days=30)
                 
                 stats = {
-                    "totale_farmaci": session.query(ListaTrasparenza)\
-                        .filter(ListaTrasparenza.data_aggiornamento == oggi)\
+                    "totale_farmaci": session.query(ListeTrasparenza)\
+                        .filter(ListeTrasparenza.data_aggiornamento == oggi)\
                         .count(),
                     "nuovi_ultimo_mese": session.query(ModificaListaTrasparenza)\
                         .filter(ModificaListaTrasparenza.tipo_modifica == 'nuovo')\
@@ -62,7 +62,7 @@ class TransparencyListChatbot:
 
             # Confronto prezzi
             if "confronta" in query or "differenza" in query:
-                for principio in session.query(ListaTrasparenza.principio_attivo).distinct():
+                for principio in session.query(ListeTrasparenza.principio_attivo).distinct():
                     if principio[0].lower() in query:
                         modifiche = session.query(ModificaListaTrasparenza)\
                             .filter(ModificaListaTrasparenza.principio_attivo == principio[0])\
