@@ -5,7 +5,7 @@ import requests
 from bs4 import BeautifulSoup
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine, text
-from models import ListaTrasparenza, ModificaListaTrasparenza
+from models import ListeTrasparenza, ModificaListaTrasparenza
 from PyPDF2 import PdfReader
 
 class TransparencyManager:
@@ -73,16 +73,13 @@ class TransparencyManager:
                         continue
                         
                     try:
-                        # Stampa la riga per debug
                         print(f"Analisi riga: {line[:100]}...")
                         fields = [f.strip() for f in line.split('\t')]
                         
-                        # Se non c'è un tab, prova a dividere per spazi multipli
                         if len(fields) < 3:
                             fields = [f.strip() for f in line.split('   ') if f.strip()]
                         
                         if len(fields) >= 3:
-                            # Cerca il prezzo nell'ultimo campo
                             prezzo_str = fields[-1].replace('€', '').replace(',', '.').strip()
                             try:
                                 prezzo = float(prezzo_str)
@@ -90,7 +87,7 @@ class TransparencyManager:
                                 print(f"Errore conversione prezzo: {prezzo_str}")
                                 continue
                             
-                            farmaco = ListaTrasparenza(
+                            farmaco = ListeTrasparenza(  # Cambiato qui da ListaTrasparenza a ListeTrasparenza
                                 principio_attivo=fields[0],
                                 nome_commerciale=fields[1] if len(fields) > 1 else '',
                                 produttore=fields[2] if len(fields) > 2 else '',
