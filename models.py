@@ -1,6 +1,13 @@
 from sqlalchemy import Column, Integer, String, Float, Date, Text
 from database import Base
 
+class PrezziRimborso(Base):
+    __tablename__ = 'prezzi_rimborso'
+    id = Column(Integer, primary_key=True)
+    data = Column(Date)
+    titolo = Column(String)
+    link = Column(String)
+
 class ListeTrasparenza(Base):
     __tablename__ = 'liste_trasparenza'
     id = Column(Integer, primary_key=True)
