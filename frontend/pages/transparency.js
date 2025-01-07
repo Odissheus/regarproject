@@ -5,7 +5,7 @@ export default function Transparency() {
 
   useEffect(() => {
     async function fetchData() {
-      const res = await fetch('http://localhost:8000/liste-trasparenza');
+      const res = await fetch('https://regar-backend.onrender.com/prezzi-rimborso');
       const data = await res.json();
       setListe(data);
     }
