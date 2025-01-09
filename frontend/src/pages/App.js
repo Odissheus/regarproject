@@ -1,8 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
-import Pricing from './pages/Pricing';
-import Transparency from './pages/Transparency';
-import Home from './pages/Home';  // Modificato da ./components/Home a ./pages/Home
+import Pricing from './Pricing';
+import Transparency from './Transparency';
+import Home from './Home';
 
 function App() {
   return (
