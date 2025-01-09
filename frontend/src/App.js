@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import Pricing from './pages/Pricing';
 import Transparency from './pages/Transparency';
-import Home from './pages/Home';
+import Home from './pages/Home';  // Modificato da ./components/Home a ./pages/Home
 
 function App() {
   return (
