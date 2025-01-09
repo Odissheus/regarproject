@@ -8,14 +8,13 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-scripts": "latest"
+    "react-router-dom": "^6.0.0",
+    "react-scripts": "latest",
+    "tailwindcss": "^3.0.0",
+    "@heroicons/react": "^2.0.0"
   },
   "browserslist": {
     "production": [
