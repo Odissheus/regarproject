@@ -1,16 +1,14 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
-import Pricing from './Pricing';
-import Transparency from './Transparency';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Home from './Home';
+import Chatbot from './Chatbot';
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/pricing" element={<Pricing />} />
-        <Route path="/transparency" element={<Transparency />} />
+        <Route path="/chatbot" element={<Chatbot />} />
       </Routes>
     </Router>
   );
