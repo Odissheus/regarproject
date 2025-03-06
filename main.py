@@ -5,9 +5,8 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from database import get_db
 from models import ListeTrasparenza, PrezziRimborso
-import requests
-from bs4 import BeautifulSoup
 from datetime import datetime
+from scraper import scrape_aifa_news
 
 app = FastAPI()
 
@@ -63,84 +62,42 @@ def get_liste_trasparenza(db: Session = Depends(get_db)):
 
 @app.get("/aifa-news", response_model=List[NewsResponse])
 def get_aifa_news():
-   """Recupera le ultime news dal sito AIFA"""
-   try:
-       url = "https://www.aifa.gov.it/news"
-       response = requests.get(url)
-       
-       if response.status_code != 200:
-           # In caso di errore, restituisci dati statici di esempio
-           return [
-               {
-                   "id": 1,
-                   "date": datetime.now().isoformat(),
-                   "title": "Esempio News AIFA 1",
-                   "summary": "Questa è una news di esempio. Il servizio di scraping potrebbe non essere disponibile.",
-                   "link": "https://www.aifa.gov.it/news"
-               },
-               {
-                   "id": 2,
-                   "date": datetime.now().isoformat(),
-                   "title": "Esempio News AIFA 2",
-                   "summary": "Questa è un'altra news di esempio. Il servizio di scraping potrebbe non essere disponibile.",
-                   "link": "https://www.aifa.gov.it/news"
-               }
-           ]
-       
-       soup = BeautifulSoup(response.content, 'html.parser')
-       news_items = []
-       
-       # Trova tutti gli articoli di news
-       articles = soup.find_all('article', class_='news-item')
-       
-       for idx, article in enumerate(articles[:10]):
-           try:
-               # Estrai data
-               date_elem = article.find('time')
-               date_str = date_elem.text.strip() if date_elem else ""
-               try:
-                   # Converte la data dal formato italiano a ISO
-                   date_obj = datetime.strptime(date_str, "%d/%m/%Y")
-                   date_iso = date_obj.isoformat()
-               except:
-                   date_iso = datetime.now().isoformat()
-               
-               # Estrai titolo
-               title_elem = article.find('h2')
-               title = title_elem.text.strip() if title_elem else "Titolo non disponibile"
-               
-               # Estrai link
-               link_elem = title_elem.find('a') if title_elem else None
-               link = "https://www.aifa.gov.it" + link_elem['href'] if link_elem and 'href' in link_elem.attrs else ""
-               
-               # Estrai summary
-               summary_elem = article.find('div', class_='field-summary')
-               summary = summary_elem.text.strip() if summary_elem else "Nessun riassunto disponibile"
-               
-               # Aggiungi alla lista
-               news_items.append({
-                   "id": idx + 1,
-                   "date": date_iso,
-                   "title": title,
-                   "summary": summary,
-                   "link": link
-               })
-           except Exception as e:
-               print(f"Errore nell'elaborazione di un articolo: {e}")
-       
-       return news_items
-   except Exception as e:
-       print(f"Errore nel recupero delle news: {e}")
-       # In caso di errore, restituisci dati statici
-       return [
-           {
-               "id": 1,
-               "date": datetime.now().isoformat(),
-               "title": "Esempio News AIFA 1",
-               "summary": "Questa è una news di esempio. Il servizio di scraping potrebbe non essere disponibile.",
-               "link": "https://www.aifa.gov.it/news"
-           }
-       ]
+    """Recupera le ultime news dal sito AIFA"""
+    try:
+        news_items = scrape_aifa_news()
+        
+        if not news_items:
+            # In caso di errore, restituisci dati statici di esempio
+            return [
+                {
+                    "id": 1,
+                    "date": datetime.now().isoformat(),
+                    "title": "Esempio News AIFA 1",
+                    "summary": "Questa è una news di esempio. Il servizio di scraping potrebbe non essere disponibile.",
+                    "link": "https://www.aifa.gov.it/news"
+                },
+                {
+                    "id": 2,
+                    "date": datetime.now().isoformat(),
+                    "title": "Esempio News AIFA 2",
+                    "summary": "Questa è un'altra news di esempio. Il servizio di scraping potrebbe non essere disponibile.",
+                    "link": "https://www.aifa.gov.it/news"
+                }
+            ]
+        
+        return news_items
+    except Exception as e:
+        print(f"Errore nel recupero delle news: {e}")
+        # In caso di errore, restituisci dati statici
+        return [
+            {
+                "id": 1,
+                "date": datetime.now().isoformat(),
+                "title": "Esempio News AIFA 1",
+                "summary": "Questa è una news di esempio. Il servizio di scraping potrebbe non essere disponibile.",
+                "link": "https://www.aifa.gov.it/news"
+            }
+        ]
 
 @app.post("/chatbot", response_model=ChatbotResponse)
 def chatbot_query(request: ChatbotRequest):
